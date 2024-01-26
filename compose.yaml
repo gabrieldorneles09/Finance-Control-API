@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+  db:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: finances
+      MYSQL_USER: finn
+      MYSQL_PASSWORD: finn
+    ports:
+      - "3306:3306"
