@@ -1,9 +1,12 @@
 from fastapi import APIRouter, Depends
 from ..dependencies import test_dependency
-from ..models.Transaction import Transaction
+from ..models.Transaction import Transaction, get_transaction_by_id, get_transactions_by_receiver_id, get_all_transactions
 from datetime import datetime
 from uuid import uuid4
 import os
+
+
+transactions_file = os.getenv('DATA_PATH') + "transactions.json"
 
 router = APIRouter(
     prefix="/transactions",
@@ -12,34 +15,42 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
-@router.post("/")
-async def create_transaction(transaction: Transaction) -> dict:
+@router.post("/{receiver_id}")
+async def create_transaction(transaction: Transaction, receiver_id: str) -> dict:
     # Create a new transaction based on the transaction received
     transaction.transaction_id = uuid4()
-    transaction.transaction_receiver_id = "XXX"
+    transaction.transaction_receiver_id = receiver_id
     transaction.charge_date = str(datetime.strptime(transaction.charge_date,"%Y-%m-%d"))
     transaction.payment_date = str(datetime.strptime(transaction.payment_date,"%Y-%m-%d"))
     transaction.insert_date = str(datetime.now().strftime("%Y-%m-%dT%H:%M:%S"))
 
-    with open(f"{os.getenv("DATA_PATH")}transactions.txt", "a") as f:
-            f.write(str(transaction.model_dump()) + "\n")
+    transaction_dict = transaction.save_transaction()
 
-    return {"transaction": transaction}
+    return transaction_dict
 
 @router.get("/")
 async def get_transactions():
-    with open(f"{os.getenv('DATA_PATH')}transactions.txt", "r") as f:
-            transactions = [line.strip('\n') for line in f]
+    transactions = await get_all_transactions()
 
-    return {"message": transactions}
+    if not transactions:
+        return {"message": "No transactions found"}
+
+    return {"transactions": transactions}
+
+@router.get("/receiver/{receiver_id}")
+async def get_transactions(receiver_id: str):
+    transaction = await get_transactions_by_receiver_id(receiver_id)
+
+    if not transaction:
+        return {"message": "No transactions found"}
+    
+    return {"message": transaction}
 
 @router.get("/{transaction_id}")
 async def get_transactions(transaction_id: str):
-    with open(f"{os.getenv('DATA_PATH')}transactions.txt", "r") as f:
-        for line in f:
-            if transaction_id in line:
-                transaction = line.strip('\n')
-                return {"message": transaction}
+    transaction = await get_transaction_by_id(transaction_id)
 
-    return {"message": "Transaction not found"}
-    
+    if not transaction:
+        return {"message": "No transactions found"}
+
+    return {"message": transaction}

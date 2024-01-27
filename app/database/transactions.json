@@ -1,0 +1,74 @@
+{
+    "transactions": [
+        {
+            "transaction_id": "42789d44-a213-4c5e-8421-28c7aa7bffad",
+            "transaction_receiver_id": "XXX",
+            "payment_form": "Pix",
+            "entry_type": "Income",
+            "category": "Geral",
+            "description": "conta de luz",
+            "value": 152.63,
+            "charge_date": "2024-01-24 00:00:00",
+            "payment_date": "2024-01-27 00:00:00",
+            "recurrent": "True",
+            "recurrence_type": null,
+            "insert_date": "2024-01-26T19:52:36"
+        },
+        {
+            "transaction_id": "df34b9e3-340d-487d-9d00-d8d19435e96b",
+            "transaction_receiver_id": "XXX",
+            "payment_form": "Pix",
+            "entry_type": "Income",
+            "category": "Geral",
+            "description": "conta de luz",
+            "value": 152.63,
+            "charge_date": "2024-01-24 00:00:00",
+            "payment_date": "2024-01-27 00:00:00",
+            "recurrent": "True",
+            "recurrence_type": null,
+            "insert_date": "2024-01-26T19:52:39"
+        },
+        {
+            "transaction_id": "51578ece-a9fe-46c0-9544-2eab7871085c",
+            "transaction_receiver_id": "XXX",
+            "payment_form": "Pix",
+            "entry_type": "Income",
+            "category": "Geral",
+            "description": "conta de luz",
+            "value": 152.63,
+            "charge_date": "2024-01-24 00:00:00",
+            "payment_date": "2024-01-27 00:00:00",
+            "recurrent": "True",
+            "recurrence_type": null,
+            "insert_date": "2024-01-26T19:52:41"
+        },
+        {
+            "transaction_id": "91097be4-1ef4-4e16-a0e8-475e0d28c0c8",
+            "transaction_receiver_id": "123",
+            "payment_form": "Pix",
+            "entry_type": "Income",
+            "category": "Geral",
+            "description": "conta de luz",
+            "value": 152.63,
+            "charge_date": "2024-01-24 00:00:00",
+            "payment_date": "2024-01-27 00:00:00",
+            "recurrent": "True",
+            "recurrence_type": null,
+            "insert_date": "2024-01-26T19:55:01"
+        },
+        {
+            "transaction_id": "93e2edd8-ac05-4105-9319-dfe8f392b2ef",
+            "transaction_receiver_id": "91097be4-1ef4-4e16-a0e8-475e0d28c0c8",
+            "payment_form": "Pix",
+            "entry_type": "Income",
+            "category": "Geral",
+            "description": "conta de luz",
+            "value": 152.63,
+            "charge_date": "2024-01-24 00:00:00",
+            "payment_date": "2024-01-27 00:00:00",
+            "recurrent": "True",
+            "recurrence_type": null,
+            "insert_date": "2024-01-26T19:55:18"
+        }
+    ]
+}
