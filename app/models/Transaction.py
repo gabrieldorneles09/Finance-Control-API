@@ -1,6 +1,7 @@
 from typing import Union
 from pydantic import BaseModel
 from uuid import UUID
+from fastapi import Path
 import os
 import json
 
@@ -17,31 +18,11 @@ class Transaction(BaseModel):
     payment_date: str
     recurrent: bool
     recurrence_type: Union[str, None] = None
+    installments: Union[int, None] = None
+    installment_value: Union[float, None] = None
     insert_date: Union[str, None] = None
-
-
-    def convert_obj_to_json(self) -> dict:
-
-        json_string = {
-            "transaction_id": str(self.transaction_id),
-            "transaction_receiver_id": self.transaction_receiver_id,
-            "payment_form": self.payment_form,
-            "entry_type": self.entry_type,
-            "category": self.category,
-            "description": self.description,
-            "value": self.value,
-            "charge_date": self.charge_date,
-            "payment_date": self.payment_date,
-            "recurrent": str(self.recurrent),
-            "recurrence_type": self.recurrence_type,
-            "insert_date": self.insert_date
-        }
-
-        return json_string
-    
-    def save_transaction(self) -> dict:
-        transaction_dict = self.convert_obj_to_json()
-
+   
+    async def save_transaction(self, transaction_dict: dict) -> dict:
         json_file = f"{os.getenv('DATA_PATH')}transactions.json"
 
         # Check if json file exists
@@ -63,6 +44,27 @@ class Transaction(BaseModel):
 
         return transaction_dict
     
+async def convert_transaction_to_json(transaction: Transaction) -> dict:
+
+    json_string = {
+        "transaction_id": str(transaction.transaction_id),
+        "transaction_receiver_id": transaction.transaction_receiver_id,
+        "payment_form": transaction.payment_form,
+        "entry_type": transaction.entry_type,
+        "category": transaction.category,
+        "description": transaction.description,
+        "value": transaction.value,
+        "charge_date": transaction.charge_date,
+        "payment_date": transaction.payment_date,
+        "recurrent": transaction.recurrent,
+        "recurrence_type": transaction.recurrence_type,
+        "installments": transaction.installments,
+        "installment_value": transaction.installment_value,
+        "insert_date": transaction.insert_date
+    }
+
+    return json_string
+
 async def get_transaction_by_id(transaction_id: str) -> dict:
     json_file = f"{os.getenv('DATA_PATH')}transactions.json"
 
