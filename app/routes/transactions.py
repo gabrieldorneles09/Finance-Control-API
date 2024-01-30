@@ -15,6 +15,7 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
+
 @router.post("/{receiver_id}")
 async def create_transaction(transaction: Transaction, receiver_id: str) -> dict:
     # Create a new transaction based on the transaction received
