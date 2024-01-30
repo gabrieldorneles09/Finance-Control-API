@@ -1,6 +1,6 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from ..dependencies import test_dependency
-from ..models.Transaction import Transaction, get_transaction_by_id, get_transactions_by_receiver_id, get_all_transactions
+from ..models.Transaction import Transaction, get_transaction_by_id, get_transactions_by_receiver_id, get_all_transactions, convert_transaction_to_json
 from datetime import datetime
 from uuid import uuid4
 import os
@@ -20,13 +20,21 @@ async def create_transaction(transaction: Transaction, receiver_id: str) -> dict
     # Create a new transaction based on the transaction received
     transaction.transaction_id = uuid4()
     transaction.transaction_receiver_id = receiver_id
-    transaction.charge_date = str(datetime.strptime(transaction.charge_date,"%Y-%m-%d"))
-    transaction.payment_date = str(datetime.strptime(transaction.payment_date,"%Y-%m-%d"))
     transaction.insert_date = str(datetime.now().strftime("%Y-%m-%dT%H:%M:%S"))
 
-    transaction_dict = transaction.save_transaction()
+    if transaction.value < 0:
+        raise HTTPException(status_code=400, detail="Value cannot be negative")
 
-    return transaction_dict
+    if transaction.total_installments > 1:
+        installments_transactions = await transaction.create_installments_transactions()
+        await transaction.save_transaction(installments_transactions)
+
+        return {"transactions": installments_transactions}
+
+    transaction_dict = await convert_transaction_to_json(transaction)
+    await transaction.save_transaction(transaction_dict)
+
+    return {"transactions": transaction_dict}
 
 @router.get("/")
 async def get_transactions():
@@ -44,7 +52,7 @@ async def get_transactions(receiver_id: str):
     if not transaction:
         return {"message": "No transactions found"}
     
-    return {"message": transaction}
+    return {"transactions": transaction}
 
 @router.get("/{transaction_id}")
 async def get_transactions(transaction_id: str):
@@ -53,4 +61,4 @@ async def get_transactions(transaction_id: str):
     if not transaction:
         return {"message": "No transactions found"}
 
-    return {"message": transaction}
+    return {"transactions": transaction}
